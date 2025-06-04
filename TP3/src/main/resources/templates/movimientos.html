@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Empleado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        input[type="datetime-local"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 2px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[readonly] {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        p {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .info {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Buscar Empleado por Documento de Identidad</h1>
+
+    <form action="#" th:action="@{/movimientos/buscar}" method="get">
+        <div>
+            <label for="documentoIdentidad">Documento de Identidad:</label>
+            <input type="text" id="documentoIdentidad" name="documentoIdentidad" required="required"/>
+        </div>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div th:if="${empleado != null}" class="info">
+        <h2>Información del Empleado</h2>
+        <p><strong>Nombre:</strong> <span th:text="${empleado.nombre}"></span></p>
+        <p><strong>Valor Documento de Identidad:</strong> <span th:text="${empleado.valorDocumentoIdentidad}"></span></p>
+        <p><strong>Fecha de Contratación:</strong> <span th:text="${empleado.fechaContratacion}"></span></p>
+        <p><strong>Saldo de Vacaciones:</strong> <span th:text="${empleado.saldoVacaciones}"></span></p>
+
+        <h3>Movimientos de Vacaciones</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo de Movimiento</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="movimiento : ${movimientos}">
+                    <td th:text="${movimiento.fecha}"></td>
+                    <td th:text="${movimiento.tipoMovimiento.nombre}"></td>
+                    <td th:text="${movimiento.monto}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Agregar Movimiento</h2>
+        <form th:action="@{/movimientos/guardar}" method="post">
+            <div>
+                <label for="valorDocId">Empleado:</label>
+                <select id="valorDocId" name="valorDocId" required="required">
+                    <option value="">Seleccione un empleado</option>
+                    <option th:each="emp : ${empleados}"
+                            th:value="${emp.valorDocumentoIdentidad}"
+                            th:text="${emp.nombre}">
+                    </option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="idTipoMovimiento">Tipo de Movimiento:</label>
+                <select id="idTipoMovimiento" name="idTipoMovimiento" required="required">
+                    <option value="">Seleccione un tipo</option>
+                    <option th:each="tipo : ${tiposMovimiento}" 
+                            th:value="${tipo.id}" 
+                            th:text="${tipo.nombre}">
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required="required" />
+            </div>
+
+            <div>
+                <label for="monto">Monto:</label>
+                <input type="number" id="monto" name="monto" required="required" step="0.01" />
+            </div>
+
+            <div>
+                <label for="idPostByUser">ID Usuario que Postea:</label>
+                <input type="text" id="idPostByUser" name="idPostByUser" th:value="${nombreUsuario}" readonly />
+            </div>
+
+            <div>
+                <label for="postInIp">IP de Publicación:</label>
+                <input type="text" id="postInIp" name="postInIp" th:value="${ipUsuario}" readonly />
+            </div>
+
+            <div>
+                <label for="postTime">Hora de Publicación:</label>
+                <input type="datetime-local" id="postTime" name="postTime" th:value="${fechaHoraActual}" readonly />
+            </div>
+
+            <button type="submit">Guardar Movimiento</button>
+        </form>
+    </div>
+
+    <div th:if="${empleado == null}">
+        <p>No se encontró un empleado con ese documento de identidad.</p>
+    </div>
+</body>
+</html>

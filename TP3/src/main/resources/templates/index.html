@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Empleados</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        .action-button {
+            background-color: #008CBA;
+        }
+
+        .action-button:hover {
+            background-color: #007bb5;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+        }
+
+        .delete-button:hover {
+            background-color: #e53935;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .header-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-buttons a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span> <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/}">Registro e inicio de sesión</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">Cerrar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br><br><br>
+
+<div class="container">
+    <h1>Lista de Empleados</h1>
+
+    <h4 class="text-center">
+        Bienvenido <span sec:authentication="principal.username"></span>
+    </h4>
+
+    <div class="header-buttons" sec:authorize="hasRole('ROLE_ADMIN')">
+        <a href="/empleados/nuevo">
+            <button>Agregar Empleado</button>
+        </a>
+        <a href="/movimientos/buscar">
+            <button>Ver movimientos</button>
+        </a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Valor Documento Identidad</th>
+            <th>Fecha Contratación</th>
+            <th>Saldo Vacaciones</th>
+            <th>Activo</th>
+            <th>Puesto</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="empleado : ${empleados}">
+            <td th:text="${empleado.id}">1</td>
+            <td th:text="${empleado.nombre}">Nombre</td>
+            <td th:text="${empleado.valorDocumentoIdentidad}">DNI</td>
+            <td th:text="${empleado.fechaContratacion}">2024-01-01</td>
+            <td th:text="${empleado.saldoVacaciones}">10</td>
+            <td th:text="${empleado.esActivo ? 'Sí' : 'No'}">Sí</td>
+            <td th:text="${empleado.puesto.nombre}">Puesto</td>
+            <td>
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/empleados/editar/{id}(id=${empleado.id})}">
+                        <button class="action-button">Editar</button>
+                    </a>
+                    <form th:action="@{/empleados/eliminar/{id}(id=${empleado.id})}" method="post">
+                        <button type="submit" class="delete-button"
+                                onclick="return confirm('¿Estás seguro de eliminar a este empleado?')">Eliminar</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+</body>
+</html>

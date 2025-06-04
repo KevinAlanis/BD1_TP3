@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Empleados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        .action-button {
+            background-color: #008CBA;
+        }
+
+        .action-button:hover {
+            background-color: #007bb5;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+        }
+
+        .delete-button:hover {
+            background-color: #e53935;
+        }
+
+        form {
+            display: inline;
+        }
+
+        .top-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .logout {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .logout a {
+            text-decoration: none;
+            color: #f44336;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logout" sec:authorize="isAuthenticated()">
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+
+    <h1>Bienvenido, <span sec:authentication="principal.username"></span></h1>
+    <div class="subtitulo" sec:authorize="hasRole('ROLE_USER')">
+        <p>No tienes permisos para modificar los datos.</p>
+    </div>
+    <div class="subtitulo" sec:authorize="hasRole('ROLE_ADMIN')">
+        <p><strong>Nota:</strong> Tienes permisos de administrador. Usa el panel adecuado.</p>
+    </div>
+
+    <h1>Lista de Empleados</h1>
+
+    <div class="top-buttons">
+        <a href="/empleados/nuevo" style="text-decoration: none;">
+            <button>Agregar Empleado</button>
+        </a>
+
+        <a href="/movimientos/buscar" style="text-decoration: none;">
+            <button>Ver movimientos</button>
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Valor Documento Identidad</th>
+                <th>Fecha Contratación</th>
+                <th>Saldo Vacaciones</th>
+                <th>Activo</th>
+                <th>Puesto</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="empleado : ${empleados}">
+                <td th:text="${empleado.id}"></td>
+                <td th:text="${empleado.nombre}"></td>
+                <td th:text="${empleado.valorDocumentoIdentidad}"></td>
+                <td th:text="${empleado.fechaContratacion}"></td>
+                <td th:text="${empleado.saldoVacaciones}"></td>
+                <td th:text="${empleado.esActivo ? 'Sí' : 'No'}"></td>
+                <td th:text="${empleado.puesto.nombre}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
