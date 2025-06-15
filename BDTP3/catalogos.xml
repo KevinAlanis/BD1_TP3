@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<Datos>
+  <TiposdeDocumentodeIdentidad>
+    <TipoDocuIdentidad Id="1" Nombre="Cedula Nacional"/>
+    <TipoDocuIdentidad Id="2" Nombre="Cedula Residente"/>
+    <TipoDocuIdentidad Id="3" Nombre="Pasaporte"/>
+    <TipoDocuIdentidad Id="4" Nombre="Cedula Juridica"/>
+    <TipoDocuIdentidad Id="5" Nombre="Permiso de Trabajo"/>
+    <TipoDocuIdentidad Id="6" Nombre="Cedula Extranjera"/>
+  </TiposdeDocumentodeIdentidad>
+  <TiposDeJornada>
+    <TipoDeJornada Id="1" Nombre="Diurno" HoraInicio="06:00" HoraFin="14:00"/>
+    <TipoDeJornada Id="2" Nombre="Vespertino" HoraInicio="14:00" HoraFin="22:00"/>
+    <TipoDeJornada Id="3" Nombre="Nocturno" HoraInicio="22:00" HoraFin="06:00"/>
+  </TiposDeJornada>
+  <Puestos>
+    <Puesto Nombre="Electricista" SalarioXHora="1200"/>
+    <Puesto Nombre="Auxiliar de Laboratorio" SalarioXHora="1250"/>
+    <Puesto Nombre="Operador de Maquina" SalarioXHora="1025"/>
+    <Puesto Nombre="Soldador" SalarioXHora="1350"/>
+    <Puesto Nombre="Tecnico de Mantenimiento" SalarioXHora="1400"/>
+    <Puesto Nombre="Bodeguero" SalarioXHora="950"/>
+  </Puestos>
+  <Departamentos>
+    <Departamento Id="1" Nombre="Enlaminado"/>
+    <Departamento Id="2" Nombre="Laboratorio"/>
+    <Departamento Id="3" Nombre="Bodega de materiales"/>
+    <Departamento Id="4" Nombre="Bodega de producto terminado"/>
+  </Departamentos>
+  <Feriados>
+    <Feriado Id="1" Nombre="Día de Año Nuevo" Fecha="20230101"/>
+    <Feriado Id="2" Nombre="Día de Juan Santamaría" Fecha="20230411"/>
+    <Feriado Id="3" Nombre="Jueves Santo" Fecha="20230406"/>
+    <Feriado Id="4" Nombre="Viernes Santo" Fecha="20230407"/>
+    <Feriado Id="5" Nombre="Día del Trabajo" Fecha="20230501"/>
+    <Feriado Id="6" Nombre="Anexión del Partido de Nicoya" Fecha="20230725"/>
+    <Feriado Id="7" Nombre="Día de la Virgen de los Ángeles" Fecha="20230802"/>
+    <Feriado Id="8" Nombre="Día de la Madre" Fecha="20230815"/>
+    <Feriado Id="9" Nombre="Día de la Independencia" Fecha="20230915"/>
+    <Feriado Id="10" Nombre="Día de las Culturas" Fecha="20231012"/>
+    <Feriado Id="11" Nombre="Navidad" Fecha="20231225"/>
+  </Feriados>
+  <TiposDeMovimiento>
+    <TipoDeMovimiento Id="1" Nombre="Credito Horas ordinarias"/>
+    <TipoDeMovimiento Id="2" Nombre="Credito Horas Extra Normales"/>
+    <TipoDeMovimiento Id="3" Nombre="Credito Horas Extra Dobles"/>
+    <TipoDeMovimiento Id="4" Nombre="Debito Deducciones de Ley"/>
+    <TipoDeMovimiento Id="5" Nombre="Debito Deduccion No Obligatoria"/>
+  </TiposDeMovimiento>
+  <TiposDeDeduccion>
+    <TipoDeDeduccion Id="1" Nombre="Obligatorio de Ley" Obligatorio="Si" Porcentual="Si" Valor="0.095"/>
+    <TipoDeDeduccion Id="2" Nombre="Ahorro Asociacion Solidarista" Obligatorio="No" Porcentual="Si" Valor="0.05"/>
+    <TipoDeDeduccion Id="3" Nombre="Ahorro Vacacional" Obligatorio="No" Porcentual="No" Valor="0"/>
+    <TipoDeDeduccion Id="4" Nombre="Pension Alimenticia" Obligatorio="No" Porcentual="No" Valor="0"/>
+  </TiposDeDeduccion>
+  <Errores>
+    <Error Codigo="50001" Descripcion="Username no existe"/>
+    <Error Codigo="50002" Descripcion="Password no existe"/>
+    <Error Codigo="50003" Descripcion="Login deshabilitado"/>
+    <Error Codigo="50004" Descripcion="Empleado con ValorDocumentoIdentidad ya existe en inserción"/>
+    <Error Codigo="50005" Descripcion="Empleado con mismo nombre ya existe en inserción"/>
+    <Error Codigo="50006" Descripcion="Empleado con ValorDocumentoIdentidad ya existe en actualización"/>
+    <Error Codigo="50007" Descripcion="Empleado con mismo nombre ya existe en actualización"/>
+    <Error Codigo="50008" Descripcion="Error de base de datos"/>
+    <Error Codigo="50009" Descripcion="Nombre de empleado no alfabético"/>
+    <Error Codigo="50010" Descripcion="Valor de documento de identidad no alfabético"/>
+  </Errores>
+  <Usuarios>
+    <Usuario Id="1" Username="Goku" Password="1234" Tipo="1"/>
+    <Usuario Id="2" Username="Willy" Password="1234" Tipo="1"/>
+    <Usuario Id="3" Username="Pepe" Password="1234" Tipo="2"/>
+    <Usuario Id="4" Username="Lola" Password="1234" Tipo="2"/>
+    <Usuario Id="5" Username="SinNombre" Password="script" Tipo="3"/>
+    <Usuario Id="6" Username="emp1" Password="1234" Tipo="2"/>
+    <Usuario Id="7" Username="emp2" Password="1234" Tipo="2"/>
+  </Usuarios>
+  <UsuariosAdministradores>
+    <UsuarioAdministrador IdUsuario="1"/>
+    <UsuarioAdministrador IdUsuario="2"/>
+  </UsuariosAdministradores>
+  <TiposdeEvento>
+    <TipoEvento Id="1" Nombre="Login"/>
+    <TipoEvento Id="2" Nombre="Logout"/>
+    <TipoEvento Id="3" Nombre="Listar empleados"/>
+    <TipoEvento Id="4" Nombre="Listar empleados con filtro"/>
+    <TipoEvento Id="5" Nombre="Insertar empleado"/>
+    <TipoEvento Id="6" Nombre="Eliminar empleado"/>
+    <TipoEvento Id="7" Nombre="Editar empleado"/>
+    <TipoEvento Id="8" Nombre="Asociar deducción"/>
+    <TipoEvento Id="9" Nombre="Desasociar deducción"/>
+    <TipoEvento Id="10" Nombre="Consultar una planilla semanal"/>
+    <TipoEvento Id="11" Nombre="Consultar una planilla mensual"/>
+    <TipoEvento Id="12" Nombre="Impersonar empleado"/>
+    <TipoEvento Id="13" Nombre="Regresar a interfaz de administrador"/>
+    <TipoEvento Id="14" Nombre="Ingreso de marcas de asistencia"/>
+    <TipoEvento Id="15" Nombre="Ingreso nuevas jornadas"/>
+  </TiposdeEvento>
+  <Empleados>
+    <Empleado Nombre="Ernest Jones" IdTipoDocumento="1" ValorDocumento="4-966-485" FechaNacimiento="1986-01-12" IdDepartamento="1" NombrePuesto="Tecnico de Mantenimiento" IdUsuario="6" Activo="1"/>
+    <Empleado Nombre="David Ng" IdTipoDocumento="1" ValorDocumento="2-311-413" FechaNacimiento="1972-07-15" IdDepartamento="4" NombrePuesto="Operador de Maquina" IdUsuario="7" Activo="1"/>
+  </Empleados>
+</Datos>
