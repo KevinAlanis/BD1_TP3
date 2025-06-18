@@ -81,38 +81,44 @@ BEGIN
 
         -- TipoIdentificacion
         INSERT INTO dbo.TipoIdentificacion (
-            Id,
-            Nombre
-        )
+			Id, 
+			Nombre
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'tipoidentificacion';
+        WHERE DT.TipoDato = 'tipodocuidentidad'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.TipoIdentificacion TI WHERE TI.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- TipoJornada
         INSERT INTO dbo.TipoJornada (
-            Id,
-            Nombre,
-            HoraInicio,
-            HoraFin
-        )
+			Id, 
+			Nombre, 
+			HoraInicio, 
+			HoraFin
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1,
             CAST(Campo2 AS TIME),
             CAST(Campo3 AS TIME)
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'tipojornada';
+        WHERE DT.TipoDato = 'tipodejornada'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.TipoJornada TJ WHERE TJ.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- TipoMovimiento
         INSERT INTO dbo.TipoMovimiento (
-            Id,
-            Nombre,
-            PostBy,
-            PostInIP,
-            PostTime
-        )
+			Id, 
+			Nombre, 
+			PostBy, 
+			PostInIP, 
+			PostTime
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1,
@@ -120,94 +126,116 @@ BEGIN
             DT.Campo9,
             CAST(Campo10 AS DATETIME)
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'tipomovimiento';
+        WHERE DT.TipoDato = 'tipodemovimiento'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.TipoMovimiento TM WHERE TM.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- TipoEvento
         INSERT INTO dbo.TipoEvento (
-            Id,
-            Nombre
-        )
+			Id, 
+			Nombre
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'tipoevento';
+        WHERE DT.TipoDato = 'tipoevento'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.TipoEvento TE WHERE TE.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- TipoDeduccion
         INSERT INTO dbo.TipoDeduccion (
-            Id,
-            Nombre,
-            Obligatorio,
-            Porcentual,
-            Valor
-        )
+			Id, 
+			Nombre, 
+			Obligatorio, 
+			Porcentual, 
+			Valor
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1,
-            CAST(Campo5 AS BIT),
-            CAST(Campo6 AS BIT),
+            DT.Campo5,
+            DT.Campo6,
             CAST(Campo7 AS DECIMAL(10,5))
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'tipodeduccion';
+        WHERE DT.TipoDato = 'tipodededuccion'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.TipoDeduccion TD WHERE TD.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- Departamento
         INSERT INTO dbo.Departamento (
-            Id,
-            Nombre
-        )
+			Id, 
+			Nombre
+		)
         SELECT
             CAST(Campo4 AS INT),
             DT.Campo1
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'departamento';
+        WHERE DT.TipoDato = 'departamento'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.Departamento D WHERE D.Id = CAST(DT.Campo4 AS INT)
+        );
+
 
         -- Puesto
 		INSERT INTO dbo.Puesto (
-			Nombre,
-			SalarioxHora,
-			PostBy,
-			PostInIP,
+			Nombre, 
+			SalarioxHora, 
+			PostBy, 
+			PostInIP, 
 			PostTime
 		)
-		SELECT
-			DT.Campo1,                                -- Nombre
-			CAST(DT.Campo11 AS DECIMAL(10,2)),        -- SalarioxHora
-			DT.Campo10,                               -- PostBy (correcto)
-			DT.Campo12,                               -- PostInIP (correcto)
-			CAST(DT.Campo13 AS DATETIME)              -- PostTime
-		FROM @DatosTabla DT
-		WHERE DT.TipoDato = 'puesto';
+        SELECT
+            DT.Campo1,
+            CAST(DT.Campo11 AS DECIMAL(10,2)),
+            DT.Campo10,
+            DT.Campo12,
+            CAST(DT.Campo13 AS DATETIME)
+        FROM @DatosTabla DT
+        WHERE DT.TipoDato = 'puesto'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.Puesto P WHERE P.Nombre = DT.Campo1
+        );
 
 
         -- Feriado
         INSERT INTO dbo.Feriado (
-			Id,
-            Nombre,
-            Fecha,
-            PostBy,
-            PostInIP,
-            PostTime
-        )
+			Id, 
+			Nombre, 
+			Fecha, 
+			PostBy, 
+			PostInIP, 
+			PostTime
+			)
         SELECT
-			CAST(Campo4 AS INT),
+            CAST(Campo4 AS INT),
             DT.Campo1,
             CAST(Campo14 AS DATE),
             DT.Campo8,
             DT.Campo9,
             CAST(Campo10 AS DATETIME)
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'feriado';
+        WHERE DT.TipoDato = 'feriado'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.Feriado F WHERE F.Id = CAST(DT.Campo4 AS INT)
+        );
 
         -- Error
         INSERT INTO dbo.Error (
-            Codigo,
-            Descripcion
-        )
+			Codigo, 
+			Descripcion
+		)
         SELECT
             CAST(Campo12 AS INT),
             DT.Campo13
         FROM @DatosTabla DT
-        WHERE DT.TipoDato = 'error';
+        WHERE DT.TipoDato = 'error'
+        AND NOT EXISTS (
+            SELECT 1 FROM dbo.Error E WHERE E.Codigo = CAST(DT.Campo12 AS INT)
+        );
 
         COMMIT TRANSACTION;
         SET @outResultCode = 0;

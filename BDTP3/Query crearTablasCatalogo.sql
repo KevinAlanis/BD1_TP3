@@ -39,8 +39,8 @@ GO
 CREATE TABLE dbo.TipoDeduccion (
     Id INT PRIMARY KEY,
     Nombre NVARCHAR(100) NOT NULL,
-    Obligatorio BIT NOT NULL,
-    Porcentual BIT NOT NULL,
+    Obligatorio NVARCHAR(50) NOT NULL,
+    Porcentual NVARCHAR(50) NOT NULL,
     Valor DECIMAL(10,5) NOT NULL
 );
 GO
@@ -90,7 +90,7 @@ CREATE TABLE dbo.Feriado (
 GO
 
 -- ========================================
--- Tabla: Error (Catálogo de errores)
+-- Tabla: Error (Cat logo de errores)
 -- ========================================
 CREATE TABLE dbo.Error (
     Id INT IDENTITY(1,1) PRIMARY KEY,
