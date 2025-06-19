@@ -115,21 +115,10 @@
         <p>No tienes permisos para modificar los datos.</p>
     </div>
     <div class="subtitulo" sec:authorize="hasRole('ROLE_ADMIN')">
-        <p><strong>Nota:</strong> Tienes permisos de administrador. Usa el panel adecuado.</p>
+        <p><strong>Nota:</strong> Si tienes permisos de administrador. Usa el panel adecuado.</p>
     </div>
 
     <h1>Lista de Empleados</h1>
-
-    <div class="top-buttons">
-        <a href="/empleados/nuevo" style="text-decoration: none;">
-            <button>Agregar Empleado</button>
-        </a>
-
-        <a href="/movimientos/buscar" style="text-decoration: none;">
-            <button>Ver movimientos</button>
-        </a>
-    </div>
-
     <table>
         <thead>
             <tr>
