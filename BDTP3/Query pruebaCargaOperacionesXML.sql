@@ -4,7 +4,7 @@ DECLARE @resultCode INT;
 -- Cargar el XML desde archivo
 SELECT @xml = CAST(BulkColumn AS XML)
 FROM OPENROWSET(
-    BULK 'C:\Users\kevin\Downloads\operacion.xml',
+    BULK 'C:\Users\kevin\Downloads\operacion1.xml',
     SINGLE_BLOB
 ) AS x;
 

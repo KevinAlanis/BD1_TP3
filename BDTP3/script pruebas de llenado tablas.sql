@@ -89,6 +89,14 @@ SELECT COUNT(*) AS Mes FROM dbo.Mes;
 SELECT * FROM dbo.Mes;
 
 
-  SELECT *
-FROM dbo.BitacoraEvento;
+SELECT *
+FROM dbo.BitacoraEvento
+ORDER BY FechaHora ASC;
+
+-- Listar empleados sin filtros
+EXEC dbo.sp_ListarEmpleados;
+
+-- Listar empleados con filtro por nombre
+EXEC dbo.sp_ListarEmpleados
+    @inNombre = 'Carlos Wein';
 

@@ -83,7 +83,8 @@ CREATE TABLE dbo.DeduccionEmpleado (
     IdEmpleado INT NOT NULL FOREIGN KEY REFERENCES dbo.Empleado(Id),
     IdTipoDeduccion INT NOT NULL FOREIGN KEY REFERENCES dbo.TipoDeduccion(Id),
     ValorFijo DECIMAL(10,2) NULL,
-    PRIMARY KEY (IdEmpleado, IdTipoDeduccion)
+	FechaAsociacion DATE NOT NULL,
+    PRIMARY KEY (IdEmpleado, IdTipoDeduccion, FechaAsociacion)
 );
 GO
 

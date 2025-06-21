@@ -3,7 +3,7 @@ DECLARE @resultCode INT;
 
 -- Leer el XML como BLOB y convertirlo a XML
 SELECT @xml = CAST(BulkColumn AS XML)
-FROM OPENROWSET(BULK 'C:\Users\kevin\Downloads\catalogos.xml', SINGLE_BLOB) AS x;
+FROM OPENROWSET(BULK 'C:\Users\kevin\Downloads\catalogos1.xml', SINGLE_BLOB) AS x;
 
 -- Ejecutar el SP de carga de empleados y usuarios
 EXEC dbo.sp_CargarEmpleadosDesdeXML
@@ -12,3 +12,8 @@ EXEC dbo.sp_CargarEmpleadosDesdeXML
 
 -- Ver resultado
 SELECT @resultCode AS CodigoResultado;
+
+SELECT * FROM dbo.DBError
+ORDER BY Id DESC;
+
+

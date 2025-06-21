@@ -123,39 +123,41 @@ BEGIN
         FROM @inXmlData.nodes('/Operacion/FechaOperacion') AS T(O)
         CROSS APPLY O.nodes('NuevosEmpleados/NuevoEmpleado') AS E(E);
 
-			  -- Asistencia
+		-- Asistencia
 		INSERT INTO dbo.Asistencia (IdEmpleado, FechaEntrada, FechaSalida)
 		SELECT E.Id, DO.HoraEntrada, DO.HoraSalida
 		FROM @DatosOperacion DO
 		INNER JOIN dbo.Empleado E ON E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
 		WHERE DO.TipoDato = 'marcaje'
 		AND NOT EXISTS (
-			SELECT 1 FROM dbo.Asistencia A WHERE A.IdEmpleado = E.Id AND A.FechaEntrada = DO.HoraEntrada AND A.FechaSalida = DO.HoraSalida
+			SELECT 1 FROM dbo.Asistencia A 
+			WHERE A.IdEmpleado = E.Id AND A.FechaEntrada = DO.HoraEntrada AND A.FechaSalida = DO.HoraSalida
 		);
 
 		-- Bitácora para asistencia
-		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, ParametrosUsados, ValoresAntes, ValoresDespues)
+		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, Parametros, Antes, Despues)
 		SELECT 
 			E.IdUsuario, 14, DO.FechaOperacion, @inPostInIP,
 			CONCAT('HoraEntrada=', CONVERT(varchar, DO.HoraEntrada), ', HoraSalida=', CONVERT(varchar, DO.HoraSalida)),
-			'', -- No hay valores antes porque es un insert
+			'',
 			CONCAT('IdEmpleado=', E.Id, ', FechaEntrada=', CONVERT(varchar, DO.HoraEntrada), ', FechaSalida=', CONVERT(varchar, DO.HoraSalida))
 		FROM @DatosOperacion DO
 		INNER JOIN dbo.Empleado E ON E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
 		WHERE DO.TipoDato = 'marcaje';
 
 		-- Asociación deducción
-		INSERT INTO dbo.DeduccionEmpleado (IdEmpleado, IdTipoDeduccion, ValorFijo)
-		SELECT E.Id, DO.IdTipoDeduccion, DO.Monto
+		INSERT INTO dbo.DeduccionEmpleado (IdEmpleado, IdTipoDeduccion, ValorFijo, FechaAsociacion)
+		SELECT DISTINCT E.Id, DO.IdTipoDeduccion, DO.Monto, DO.FechaOperacion
 		FROM @DatosOperacion DO
 		INNER JOIN dbo.Empleado E ON E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
 		WHERE DO.TipoDato = 'asociaciondeduccion'
 		AND NOT EXISTS (
-			SELECT 1 FROM dbo.DeduccionEmpleado DE WHERE DE.IdEmpleado = E.Id AND DE.IdTipoDeduccion = DO.IdTipoDeduccion
+			SELECT 1 FROM dbo.DeduccionEmpleado DE
+			WHERE DE.IdEmpleado = E.Id AND DE.IdTipoDeduccion = DO.IdTipoDeduccion AND DE.FechaAsociacion = DO.FechaOperacion
 		);
 
 		-- Bitácora para asociación deducción
-		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, ParametrosUsados, ValoresAntes, ValoresDespues)
+		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, Parametros, Antes, Despues)
 		SELECT 
 			E.IdUsuario, 8, DO.FechaOperacion, @inPostInIP,
 			CONCAT('IdTipoDeduccion=', DO.IdTipoDeduccion, ', Monto=', DO.Monto),
@@ -165,7 +167,7 @@ BEGIN
 		INNER JOIN dbo.Empleado E ON E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
 		WHERE DO.TipoDato = 'asociaciondeduccion';
 
-		-- Desasociación deducción
+		-- Desasociación deducción (no se inserta, se elimina, no necesita EXISTS pero se mantiene el control)
 		DELETE DE
 		FROM dbo.DeduccionEmpleado DE
 		INNER JOIN dbo.Empleado E ON DE.IdEmpleado = E.Id
@@ -174,7 +176,7 @@ BEGIN
 		AND DE.IdTipoDeduccion = DO.IdTipoDeduccion;
 
 		-- Bitácora para desasociación deducción
-		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, ParametrosUsados, ValoresAntes, ValoresDespues)
+		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, Parametros, Antes, Despues)
 		SELECT 
 			E.IdUsuario, 9, DO.FechaOperacion, @inPostInIP,
 			CONCAT('IdTipoDeduccion=', DO.IdTipoDeduccion),
@@ -192,11 +194,12 @@ BEGIN
 		INNER JOIN dbo.Semana S ON DO.FechaOperacion BETWEEN S.FechaInicio AND S.FechaFin
 		WHERE DO.TipoDato = 'jornadaprosemanal'
 		AND NOT EXISTS (
-			SELECT 1 FROM dbo.JornadaPorSemana JPS WHERE JPS.IdEmpleado = E.Id AND JPS.IdSemana = S.Id AND JPS.IdTipoJornada = DO.IdTipoJornada
+			SELECT 1 FROM dbo.JornadaPorSemana JPS 
+			WHERE JPS.IdEmpleado = E.Id AND JPS.IdSemana = S.Id AND JPS.IdTipoJornada = DO.IdTipoJornada
 		);
 
 		-- Bitácora para jornada
-		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, ParametrosUsados, ValoresAntes, ValoresDespues)
+		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, Parametros, Antes, Despues)
 		SELECT 
 			E.IdUsuario, 15, DO.FechaOperacion, @inPostInIP,
 			CONCAT('IdSemana=', S.Id, ', IdTipoJornada=', DO.IdTipoJornada),
@@ -207,36 +210,63 @@ BEGIN
 		INNER JOIN dbo.Semana S ON DO.FechaOperacion BETWEEN S.FechaInicio AND S.FechaFin
 		WHERE DO.TipoDato = 'jornadaprosemanal';
 
-		-- Usuario nuevo
-		INSERT INTO dbo.Usuario (Username, Password, TipoUsuario)
-		SELECT DO.Usuario, DO.Password, 2
-		FROM @DatosOperacion DO
-		WHERE DO.TipoDato = 'nuevoempleado'
-		AND NOT EXISTS (
-			SELECT 1 FROM dbo.Usuario U WHERE U.Username = DO.Usuario
-		);
+		-- Procesar nuevos empleados
+DECLARE @NuevoIdUsuario INT;
 
-		-- Empleado nuevo
-		INSERT INTO dbo.Empleado (IdPuesto, IdDepartamento, IdTipoIdentificacion, ValorDocumentoIdentidad, Nombre, FechaNacimiento, IdUsuario, EsActivo)
-		SELECT P.Id, DO.IdDepartamento, DO.IdTipoDocumento, DO.ValorTipoDocumento, DO.Nombre, CAST(DO.FechaOperacion AS DATETIME), U.Id, 1
-		FROM @DatosOperacion DO
-		INNER JOIN dbo.Puesto P ON P.Nombre = DO.NombrePuesto
-		INNER JOIN dbo.Usuario U ON U.Username = DO.Usuario
-		WHERE DO.TipoDato = 'nuevoempleado'
-		AND NOT EXISTS (
-			SELECT 1 FROM dbo.Empleado E WHERE E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
-		);
+DECLARE emp_cursor CURSOR FOR 
+SELECT DO.Nombre, DO.ValorTipoDocumento, DO.IdTipoDocumento, DO.IdDepartamento,
+       DO.NombrePuesto, DO.Usuario, DO.Password, DO.FechaOperacion
+FROM @DatosOperacion DO
+WHERE DO.TipoDato = 'nuevoempleado'
+AND NOT EXISTS (
+    SELECT 1 FROM dbo.Empleado E WHERE E.ValorDocumentoIdentidad = DO.ValorTipoDocumento
+);
 
-		-- Bitácora para nuevo empleado
-		INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, ParametrosUsados, ValoresAntes, ValoresDespues)
-		SELECT 
-			U.Id, 5, DO.FechaOperacion, @inPostInIP,
-			CONCAT('Nombre=', DO.Nombre, ', Usuario=', DO.Usuario),
-			'',
-			CONCAT('Nombre=', DO.Nombre, ', ValorDocumentoIdentidad=', DO.ValorTipoDocumento)
-		FROM @DatosOperacion DO
-		INNER JOIN dbo.Usuario U ON U.Username = DO.Usuario
-		WHERE DO.TipoDato = 'nuevoempleado';
+DECLARE @Nombre NVARCHAR(255),
+        @ValorTipoDocumento NVARCHAR(50),
+        @IdTipoDocumento INT,
+        @IdDepartamento INT,
+        @NombrePuesto NVARCHAR(255),
+        @Usuario NVARCHAR(255),
+        @Password NVARCHAR(255),
+        @FechaOperacion DATE;
+
+OPEN emp_cursor;
+FETCH NEXT FROM emp_cursor INTO @Nombre, @ValorTipoDocumento, @IdTipoDocumento, @IdDepartamento,
+                               @NombrePuesto, @Usuario, @Password, @FechaOperacion;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Calcular nuevo ID usuario
+    SELECT @NuevoIdUsuario = ISNULL(MAX(Id), 0) + 1 FROM dbo.Usuario;
+
+    -- Insertar usuario
+    INSERT INTO dbo.Usuario (Id, Username, Password, TipoUsuario)
+    VALUES (@NuevoIdUsuario, @Usuario, @Password, 2);
+
+    -- Insertar empleado
+    INSERT INTO dbo.Empleado (IdPuesto, IdDepartamento, IdTipoIdentificacion, ValorDocumentoIdentidad, Nombre, FechaNacimiento, IdUsuario, EsActivo)
+    SELECT P.Id, @IdDepartamento, @IdTipoDocumento, @ValorTipoDocumento, @Nombre, CAST(@FechaOperacion AS DATETIME), @NuevoIdUsuario, 1
+    FROM dbo.Puesto P
+    WHERE P.Nombre = @NombrePuesto;
+
+    -- Bitácora
+    INSERT INTO dbo.BitacoraEvento (IdUsuario, IdTipoEvento, FechaHora, IP, Parametros, Antes, Despues)
+    VALUES (
+        @NuevoIdUsuario, 5, @FechaOperacion, @inPostInIP,
+        CONCAT('Nombre=', @Nombre, ', Usuario=', @Usuario),
+        '',
+        CONCAT('Nombre=', @Nombre, ', ValorDocumentoIdentidad=', @ValorTipoDocumento)
+    );
+
+    FETCH NEXT FROM emp_cursor INTO @Nombre, @ValorTipoDocumento, @IdTipoDocumento, @IdDepartamento,
+                                   @NombrePuesto, @Usuario, @Password, @FechaOperacion;
+END;
+
+CLOSE emp_cursor;
+DEALLOCATE emp_cursor;
+
+
 
 
         COMMIT TRANSACTION;
