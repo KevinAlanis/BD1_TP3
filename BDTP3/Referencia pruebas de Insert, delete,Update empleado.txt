@@ -1,0 +1,41 @@
+-- Insertar un empleado
+DECLARE @resultCode INT;
+EXEC dbo.sp_InsertarEmpleado
+    @inIdPuesto = 10,
+    @inIdDepartamento = 2,
+    @inIdTipoIdentificacion = 1,
+    @inValorDocumentoIdentidad = '1-1234-5678',
+    @inNombre = 'Juan Perez',
+    @inFechaNacimiento = '1990-05-15',
+    @inIdUsuario = 4,
+    @inPostBy = 'admin',
+    @inPostInIP = '192.168.1.100',
+    @outResultCode = @resultCode OUTPUT;
+SELECT @resultCode AS ResultCode;
+
+-- Actualizar el empleado
+DECLARE @resultCode INT;
+EXEC dbo.sp_ActualizarEmpleado
+    @inIdEmpleado = 18,
+    @inNombre = 'Juan P. Modificado',
+    @inIdTipoIdentificacion = 2,
+    @inValorDocumentoIdentidad = '1-1234-5678',
+    @inFechaNacimiento = '1990-05-15',
+    @inIdPuesto = 12,
+    @inIdDepartamento = 3,
+    @outResultCode = @resultCode OUTPUT;
+SELECT @resultCode AS ResultCode;
+
+-- Borrar el empleado
+DECLARE @resultCode INT;
+EXEC dbo.sp_BorrarEmpleado
+    @inIdEmpleado = 18,
+    @outResultCode = @resultCode OUTPUT;
+SELECT @resultCode AS ResultCode;
+
+-- Listar empleados sin filtros
+EXEC dbo.sp_ListarEmpleados;
+
+-- Listar empleados con filtro por nombre
+EXEC dbo.sp_ListarEmpleados
+    @inNombre = 'on';
