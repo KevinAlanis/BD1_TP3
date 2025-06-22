@@ -23,7 +23,7 @@ CREATE TABLE dbo.Empleado (
     IdPuesto INT NOT NULL FOREIGN KEY REFERENCES dbo.Puesto(Id),
     IdDepartamento INT NOT NULL FOREIGN KEY REFERENCES dbo.Departamento(Id),
     IdTipoIdentificacion INT NOT NULL FOREIGN KEY REFERENCES dbo.TipoIdentificacion(Id),
-    ValorDocumentoIdentidad NVARCHAR(30) NOT NULL,
+    ValorDocumentoIdentidad NVARCHAR(30) NOT NULL UNIQUE,
     Nombre NVARCHAR(100) NOT NULL,
     FechaNacimiento DATE NOT NULL,
     IdUsuario INT NOT NULL FOREIGN KEY REFERENCES dbo.Usuario(Id),
