@@ -100,3 +100,35 @@ EXEC dbo.sp_ListarEmpleados;
 EXEC dbo.sp_ListarEmpleados
     @inNombre = 'Carlos Wein';
 
+
+-- Inserta un empleado de prueba para disparar el trigger
+DECLARE @resultCode INT;
+
+PRINT '--- INSERT 1: NUEVO EMPLEADO (DEBE SER EXITOSO) ---';
+EXEC dbo.sp_InsertarEmpleado
+    @inIdPuesto = 12,
+    @inIdDepartamento = 1,
+    @inIdTipoIdentificacion = 1,
+    @inValorDocumentoIdentidad = 'CedFaPrueba',
+    @inNombre = 'Fany Alanis',
+    @inFechaNacimiento = '1998-02-24',
+    @inUsername = 'random1',
+    @inPassword = '1234',
+    @inPostBy = 'admin',
+    @inPostInIP = '192.168.1.100',
+    @outResultCode = @resultCode OUTPUT;
+SELECT @resultCode AS ResultCode;
+
+-- Ver los datos insertados (debería haber solo el primer empleado)
+PRINT '--- EMPLEADOS ACTUALES ---';
+SELECT * FROM dbo.Empleado ORDER BY Id DESC;
+
+PRINT '--- USUARIOS ACTUALES ---';
+SELECT * FROM dbo.Usuario ORDER BY Id DESC;
+
+-- Verifica deducciones asociadas
+SELECT * FROM dbo.DeduccionEmpleado ORDER BY IdEmpleado DESC; 
+
+-- Verifica bitácora
+SELECT * FROM dbo.BitacoraEvento ORDER BY FechaHora DESC;
+
