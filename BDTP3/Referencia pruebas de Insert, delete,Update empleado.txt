@@ -1,13 +1,14 @@
 -- Insertar un empleado
 DECLARE @resultCode INT;
 EXEC dbo.sp_InsertarEmpleado
-    @inIdPuesto = 10,
-    @inIdDepartamento = 2,
+    @inIdPuesto = 12,
+    @inIdDepartamento = 1,
     @inIdTipoIdentificacion = 1,
-    @inValorDocumentoIdentidad = '1-1234-5678',
-    @inNombre = 'Juan Perez',
-    @inFechaNacimiento = '1990-05-15',
-    @inIdUsuario = 4,
+    @inValorDocumentoIdentidad = 'CedFaPrueba',
+    @inNombre = 'Fany Alanis',
+    @inFechaNacimiento = '1998-02-24',
+    @inUsername = 'random1',
+    @inPassword = '1234',
     @inPostBy = 'admin',
     @inPostInIP = '192.168.1.100',
     @outResultCode = @resultCode OUTPUT;
@@ -16,20 +17,22 @@ SELECT @resultCode AS ResultCode;
 -- Actualizar el empleado
 DECLARE @resultCode INT;
 EXEC dbo.sp_ActualizarEmpleado
-    @inIdEmpleado = 18,
-    @inNombre = 'Juan P. Modificado',
-    @inIdTipoIdentificacion = 2,
-    @inValorDocumentoIdentidad = '1-1234-5678',
-    @inFechaNacimiento = '1990-05-15',
-    @inIdPuesto = 12,
-    @inIdDepartamento = 3,
+    @inIdEmpleado = 1,  -- cambia por un Id válido si es diferente
+    @inNombre = 'Pedro Gonzalez',
+    @inIdTipoIdentificacion = 1,
+    @inValorDocumentoIdentidad = '2-3456-7890',
+    @inFechaNacimiento = '1985-04-10',
+    @inIdPuesto = 1,
+    @inIdDepartamento = 1,
+    @inPostBy = 'admin',
+    @inPostInIP = '192.168.1.100',
     @outResultCode = @resultCode OUTPUT;
 SELECT @resultCode AS ResultCode;
-
 -- Borrar el empleado
-DECLARE @resultCode INT;
 EXEC dbo.sp_BorrarEmpleado
-    @inIdEmpleado = 18,
+    @inIdEmpleado = 125,  -- Cambia por un Id real de un empleado activo en tu base
+    @inPostBy = 'admin',
+    @inPostInIP = '192.168.1.100',
     @outResultCode = @resultCode OUTPUT;
 SELECT @resultCode AS ResultCode;
 
