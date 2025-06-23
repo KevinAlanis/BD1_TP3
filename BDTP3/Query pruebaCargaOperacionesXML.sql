@@ -4,7 +4,7 @@ DECLARE @resultCode INT;
 -- Cargar el XML desde archivo
 SELECT @xml = CAST(BulkColumn AS XML)
 FROM OPENROWSET(
-    BULK 'C:\Users\kevin\Downloads\operacion1.xml',
+    BULK 'C:\Users\kevin\Downloads\operacionFIN.xml',
     SINGLE_BLOB
 ) AS x;
 
@@ -17,7 +17,9 @@ EXEC dbo.sp_CargarOperacionDesdeXML
 -- Mostrar resultado del SP
 SELECT @resultCode AS CodigoResultado;
 
-SELECT *
+SELECT TOP 20 *
 FROM dbo.DBError
 ORDER BY DateTime DESC;
 
+SELECT * FROM semana
+SELECT * FROM Asistencia
